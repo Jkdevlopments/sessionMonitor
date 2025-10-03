@@ -1,13 +1,18 @@
 try:
-
     import base64
     import threading
     import cv2
     import numpy as np
+    import os
     from flask import Flask, render_template_string
     from flask_socketio import SocketIO
-except ImportError as e:
-    os.system("pip install flask flask-socketio eventlet opencv-python numpy")
+    from pyngrok import ngrok
+except ImportError:
+    os.system("pip install flask flask-socketio eventlet opencv-python numpy pyngrok")
+    import base64, threading, cv2, numpy as np, os
+    from flask import Flask, render_template_string
+    from flask_socketio import SocketIO
+    from pyngrok import ngrok
 
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
@@ -177,6 +182,9 @@ if __name__ == "__main__":
     t.daemon = True
     t.start()
 
-    print("Open browser at http://127.0.0.1:3000")
+    # Start ngrok tunnel
+    public_url = ngrok.connect(3000)
+    print("🔗 Public Portfolio Link:", public_url)
+
     socketio.run(app, host="0.0.0.0", port=3000)
     print("Exiting...")
